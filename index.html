@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday LOCHAN | The Extraordinary Celebration</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Outfit:wght@300;400;600;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-main: 'Outfit', sans-serif;
+      --font-display: 'Cinzel', serif;
+      --font-code: 'Space Grotesk', monospace;
+    }
+    body {
+      font-family: var(--font-main);
+      background: #05050d;
+      color: #f8fafc;
+      overflow-x: hidden;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .font-display { font-family: var(--font-display); }
+    .font-code { font-family: var(--font-code); }
+
+    /* Animated Cyber Aura */
+    .neon-text-gold {
+      background: linear-gradient(135deg, #FFE259 0%, #FFA751 50%, #FFD700 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.6));
+    }
+    .neon-text-cyan {
+      background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #b92b27 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 25px rgba(0, 242, 254, 0.7));
+    }
+    .cosmic-glow {
+      box-shadow: 0 0 50px -10px rgba(168, 85, 247, 0.45), 0 0 20px -5px rgba(236, 72, 153, 0.3);
+    }
+    .gold-glow {
+      box-shadow: 0 0 35px -5px rgba(255, 215, 0, 0.5), inset 0 0 15px rgba(255, 215, 0, 0.2);
+    }
+
+    /* Candle Flame Animation */
+    @keyframes flicker {
+      0%, 100% { transform: scale(1) rotate(-1deg); opacity: 0.95; }
+      25% { transform: scale(1.08, 0.95) rotate(2deg); opacity: 1; }
+      50% { transform: scale(0.95, 1.1) rotate(-2deg); opacity: 0.85; }
+      75% { transform: scale(1.05, 1.02) rotate(1deg); opacity: 1; }
+    }
+    .flame-active {
+      animation: flicker 1.2s ease-in-out infinite;
+      transform-origin: center bottom;
+      filter: drop-shadow(0 -5px 12px #ff7b00) drop-shadow(0 0 25px #ffae00);
+    }
+    .flame-extinguished {
+      opacity: 0 !important;
+      transform: scale(0) !important;
+      transition: all 0.5s ease;
+    }
+
+    /* Smoke rising after blowing candles */
+    @keyframes smokeRise {
+      0% { opacity: 0.8; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-40px) scale(2.5) translateX(15px); }
+    }
+    .smoke-puff {
+      animation: smokeRise 1.6s forwards ease-out;
+    }
+
+    /* Floating Balloons */
+    @keyframes floatUp {
+      0% { transform: translateY(110vh) rotate(0deg); }
+      100% { transform: translateY(-150px) rotate(15deg); }
+    }
+    .floating-balloon {
+      animation: floatUp 14s linear infinite;
+    }
+
+    /* Shimmering Button */
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .shimmer-btn {
+      background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6, #ec4899);
+      background-size: 300% 100%;
+      animation: shimmer 5s infinite linear;
+    }
+
+    /* 3D Gift Box */
+    .gift-lid {
+      transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: top left;
+    }
+    .gift-opened .gift-lid {
+      transform: rotate(-55deg) translate(-25px, -30px);
+    }
+  </style>
+</head>
+<body class="min-h-screen relative overflow-x-hidden selection:bg-pink-500 selection:text-white">
+
+  <!-- Interactive Canvas Fireworks & Stars -->
+  <canvas id="fireworksCanvas" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
+
+  <!-- Ambient Glowing Blobs -->
+  <div class="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none"></div>
+  <div class="fixed bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-amber-500/15 rounded-full blur-[140px] pointer-events-none"></div>
+  <div class="fixed top-[40%] right-[10%] w-[400px] h-[400px] bg-cyan-500/15 rounded-full blur-[130px] pointer-events-none"></div>
+
+  <!-- Interactive Floating Balloons Container -->
+  <div id="balloonContainer" class="fixed inset-0 pointer-events-none z-10 overflow-hidden"></div>
+
+  <!-- Top Utility Control Bar -->
+  <header class="relative z-40 max-w-6xl mx-auto px-4 pt-4 sm:pt-6 flex flex-wrap justify-between items-center gap-3">
+    <div class="flex items-center gap-2 sm:gap-3 bg-white/5 backdrop-blur-md px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/10 shadow-lg">
+      <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+      <span class="font-code text-[11px] sm:text-xs tracking-wider uppercase text-slate-300 font-semibold">Special Edition: LOCHAN</span>
+    </div>
+
+    <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Mega Fireworks Trigger -->
+      <button id="megaBlastBtn" class="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 font-code text-[11px] sm:text-xs font-bold text-black uppercase tracking-wider transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(245,158,11,0.5)]">
+        🚀 Launch Rockets
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="relative z-20 max-w-5xl mx-auto px-3 sm:px-4 pt-6 sm:pt-10 pb-16 sm:pb-20 flex flex-col items-center text-center">
+
+    <!-- Royalty Badge -->
+    <div class="inline-flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-amber-500/20 via-purple-500/20 to-cyan-500/20 border border-amber-400/40 backdrop-blur-xl mb-4 sm:mb-6 shadow-[0_0_30px_rgba(251,191,36,0.2)]">
+      <span class="text-base sm:text-xl">👑</span>
+      <span class="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-[0.15em] sm:tracking-[0.25em] text-amber-300 font-code">Saluting an Extraordinary Force of Nature</span>
+      <span class="text-base sm:text-xl">✨</span>
+    </div>
+
+    <!-- Main Dynamic Title -->
+    <h1 class="text-3xl sm:text-6xl md:text-8xl font-black tracking-tight leading-[1.08] mb-4 break-words w-full">
+      HAPPY BIRTHDAY <br/>
+      <span class="neon-text-gold font-display text-4xl sm:text-7xl md:text-9xl block mt-2 hover:scale-[1.02] transition-transform duration-300 cursor-pointer" id="nameTrigger">
+        LOCHAN
+      </span>
+    </h1>
+
+    <p class="max-w-2xl text-slate-300 text-sm sm:text-lg md:text-xl font-light leading-relaxed mb-8 sm:mb-10 px-2 sm:px-4">
+      To an extraordinary leader, a visionary heart, and a one-of-a-kind legend. May your new revolution around the sun bring unstoppable victories, celestial milestones, and pure brilliance.
+    </p>
+
+    <!-- Interactive Centerpiece: Luxury 3-Tier Illuminated Birthday Cake -->
+    <div class="relative w-full max-w-xs sm:max-w-md my-3 sm:my-4 p-5 sm:p-8 rounded-3xl bg-slate-900/60 backdrop-blur-2xl border border-white/15 cosmic-glow flex flex-col items-center">
+      
+      <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 sm:px-4 py-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-black font-code text-[10px] sm:text-xs font-black uppercase tracking-wider shadow-md whitespace-nowrap">
+        Interactive Birthday Cake
+      </div>
+
+      <!-- Cake Container -->
+      <div id="cakeStage" class="relative w-56 sm:w-64 h-56 sm:h-64 flex flex-col items-center justify-end pb-3 sm:pb-4 pt-6 sm:pt-8 cursor-pointer select-none">
+        
+        <!-- Candles Layer -->
+        <div class="flex justify-center items-end gap-4 sm:gap-5 mb-1 z-20">
+          <!-- Candle 1 -->
+          <div class="candle-unit flex flex-col items-center" data-candle="1">
+            <div class="flame flame-active w-3.5 h-6 rounded-full bg-gradient-to-t from-orange-500 via-amber-300 to-yellow-100"></div>
+            <div class="wick w-0.5 h-1.5 bg-neutral-200"></div>
+            <div class="w-2.5 h-7 sm:h-8 bg-gradient-to-b from-cyan-400 to-blue-600 rounded-sm shadow-sm"></div>
+          </div>
+          <!-- Candle 2 (Center - Tall) -->
+          <div class="candle-unit flex flex-col items-center -translate-y-2" data-candle="2">
+            <div class="flame flame-active w-4 h-7 rounded-full bg-gradient-to-t from-rose-500 via-amber-300 to-yellow-100"></div>
+            <div class="wick w-0.5 h-2 bg-neutral-200"></div>
+            <div class="w-3 h-9 sm:h-10 bg-gradient-to-b from-amber-300 to-yellow-500 rounded-sm shadow-sm"></div>
+          </div>
+          <!-- Candle 3 -->
+          <div class="candle-unit flex flex-col items-center" data-candle="3">
+            <div class="flame flame-active w-3.5 h-6 rounded-full bg-gradient-to-t from-purple-500 via-amber-300 to-yellow-100"></div>
+            <div class="wick w-0.5 h-1.5 bg-neutral-200"></div>
+            <div class="w-2.5 h-7 sm:h-8 bg-gradient-to-b from-pink-400 to-purple-600 rounded-sm shadow-sm"></div>
+          </div>
+        </div>
+
+        <!-- Tier 1 (Top Tier) -->
+        <div class="w-28 sm:w-32 h-9 sm:h-10 rounded-t-xl bg-gradient-to-r from-pink-500 via-rose-400 to-purple-500 relative border-b-2 border-pink-700/50 flex items-center justify-center shadow-lg">
+          <div class="text-[9px] sm:text-[10px] font-bold tracking-widest text-white/90 uppercase font-code">LOCHAN</div>
+        </div>
+
+        <!-- Tier 2 (Middle Tier) -->
+        <div class="w-40 sm:w-44 h-11 sm:h-12 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 relative border-b-2 border-indigo-900/50 flex items-center justify-center shadow-xl">
+          <div class="w-full flex justify-around px-2">
+            <span class="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-yellow-300 shadow-[0_0_8px_gold]"></span>
+            <span class="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-yellow-300 shadow-[0_0_8px_gold]"></span>
+            <span class="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-yellow-300 shadow-[0_0_8px_gold]"></span>
+            <span class="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-yellow-300 shadow-[0_0_8px_gold]"></span>
+            <span class="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-yellow-300 shadow-[0_0_8px_gold]"></span>
+          </div>
+        </div>
+
+        <!-- Tier 3 (Base Tier) -->
+        <div class="w-52 sm:w-56 h-12 sm:h-14 rounded-b-2xl bg-gradient-to-r from-amber-500 via-purple-700 to-cyan-600 relative flex items-center justify-center shadow-2xl">
+          <span class="font-display text-[10px] sm:text-xs tracking-widest text-amber-200 font-bold uppercase">EXTRAORDINARY</span>
+        </div>
+
+        <!-- Cake Platter / Stand -->
+        <div class="w-56 sm:w-64 h-3 rounded-full bg-gradient-to-r from-slate-400 via-white to-slate-400 shadow-2xl mt-0.5"></div>
+      </div>
+
+      <!-- Interactive Blow Candles Button -->
+      <button id="blowCandlesBtn" class="mt-4 px-5 sm:px-6 py-2.5 sm:py-3 rounded-2xl shimmer-btn text-white font-extrabold text-xs sm:text-sm tracking-wider uppercase transition-all transform hover:scale-105 active:scale-95 shadow-xl flex items-center gap-2">
+        <span>💨</span>
+        <span id="blowBtnLabel">Blow Candles & Make a Wish</span>
+        <span>✨</span>
+      </button>
+
+      <p id="wishHint" class="text-[11px] sm:text-xs text-slate-400 mt-2 font-light">
+        Tap button or tap individual candles to blow them out!
+      </p>
+
+      <!-- Hidden Surprise Banner revealed upon blowing candles -->
+      <div id="wishGrantedMessage" class="hidden mt-4 p-3 sm:p-4 rounded-xl bg-gradient-to-r from-amber-500/20 to-pink-500/20 border border-amber-400/40 text-center animate-bounce">
+        <p class="text-amber-300 font-bold text-xs sm:text-sm">🌟 WISH SENT TO THE UNIVERSE FOR LOCHAN! 🌟</p>
+        <p class="text-[11px] sm:text-xs text-slate-200 mt-1">May every single dream you have take flight and conquer new horizons!</p>
+      </div>
+    </div>
+
+    <!-- Interactive 3D Mystery Gift Unboxing -->
+    <div class="w-full max-w-3xl mt-8 sm:mt-12 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-stretch">
+      
+      <!-- Mystery Vault Card -->
+      <div id="giftCard" class="p-5 sm:p-6 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-white/10 hover:border-amber-400/50 transition-all flex flex-col items-center justify-center text-center group cursor-pointer">
+        <span class="text-[11px] sm:text-xs font-code uppercase tracking-wider text-cyan-400 font-bold mb-2">Exclusive Birthday Vault</span>
+        <h3 class="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4">Lochan's VIP Mystery Box</h3>
+
+        <!-- Interactive Gift Box Illustration -->
+        <div id="giftBoxContainer" class="relative w-28 sm:w-32 h-28 sm:h-32 my-2 sm:my-3 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+          <!-- Lid -->
+          <div id="giftLid" class="gift-lid absolute -top-1 w-20 sm:w-24 h-6 sm:h-7 rounded bg-gradient-to-r from-rose-500 to-pink-600 shadow-md flex items-center justify-center z-10">
+            <div class="w-3.5 sm:w-4 h-full bg-amber-400"></div>
+            <!-- Ribbon Knot -->
+            <div class="absolute -top-3 w-5 sm:w-6 h-3.5 sm:h-4 bg-amber-300 rounded-full border border-amber-500"></div>
+          </div>
+          <!-- Base Box -->
+          <div class="w-16 sm:w-20 h-16 sm:h-20 rounded-b-lg bg-gradient-to-br from-purple-700 to-indigo-900 shadow-2xl flex items-center justify-center relative overflow-hidden border border-purple-400/30">
+            <div class="w-3.5 sm:w-4 h-full bg-amber-400 shadow-sm"></div>
+            <div class="h-3.5 sm:h-4 w-full bg-amber-400 absolute shadow-sm"></div>
+          </div>
+        </div>
+
+        <p id="giftStatusText" class="text-xs font-semibold text-amber-300 mt-2">
+          🎁 Tap to Unbox Lochan's Proclamation
+        </p>
+      </div>
+
+      <!-- Extraordinary Proclamation Revealed Content -->
+      <div id="proclamationCard" class="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-purple-950/40 via-slate-900/60 to-black/80 backdrop-blur-xl border border-amber-400/20 flex flex-col justify-between text-left relative overflow-hidden">
+        <div class="absolute top-0 right-0 translate-x-4 -translate-y-4 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 sm:px-3 py-1 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/30 font-code text-[10px] sm:text-[11px] font-bold">
+              OFFICIAL TRIBUTE
+            </span>
+            <span class="text-lg sm:text-xl">⚡</span>
+          </div>
+
+          <h4 class="text-base sm:text-lg font-bold text-white font-display">The Extraordinary Certificate of Greatness</h4>
+          
+          <p class="text-xs text-slate-300 mt-2 sm:mt-3 leading-relaxed">
+            Whereas <strong class="text-amber-300 font-semibold">LOCHAN</strong> consistently radiates unmatched drive, inspiring aura, high intellect, and an uncompromising pursuit of greatness:
+          </p>
+
+          <blockquote class="border-l-2 border-cyan-400 pl-3 my-2.5 sm:my-3 text-xs italic text-cyan-200">
+            "Ordinary people accept reality. Extraordinary minds like Lochan shape it into reality."
+          </blockquote>
+        </div>
+
+        <div class="pt-3 border-t border-white/10 flex items-center justify-between">
+          <div class="text-[9px] sm:text-[10px] font-code text-slate-400">
+            STATUS: <span class="text-emerald-400 font-bold">LEGENDARY TIER</span>
+          </div>
+          <button id="stampBtn" class="px-2.5 sm:px-3 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/40 border border-amber-400/40 text-[10px] sm:text-[11px] font-bold text-amber-200 transition-all">
+            ⭐ Endorse Legend
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Lochan's Extraordinary Attribute Metrics -->
+    <div class="w-full max-w-4xl mt-10 sm:mt-14">
+      <div class="text-center mb-6 sm:mb-8">
+        <span class="font-code text-[11px] sm:text-xs uppercase tracking-widest text-pink-400 font-bold">Universal Character Scan</span>
+        <h3 class="text-xl sm:text-2xl md:text-3xl font-bold text-white mt-1">Why Lochan Stands Out From The Rest</h3>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <!-- Metric 1 -->
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-pink-500/40 transition-all text-center">
+          <div class="text-2xl sm:text-3xl mb-1">🔥</div>
+          <div class="font-display text-xl sm:text-2xl font-black text-amber-300">100%</div>
+          <div class="text-xs font-bold text-slate-200 mt-1">Aura & Presence</div>
+          <div class="text-[10px] text-slate-400">Commands any room</div>
+        </div>
+        <!-- Metric 2 -->
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-cyan-500/40 transition-all text-center">
+          <div class="text-2xl sm:text-3xl mb-1">🧠</div>
+          <div class="font-display text-xl sm:text-2xl font-black text-cyan-300">9999+</div>
+          <div class="text-xs font-bold text-slate-200 mt-1">Visionary IQ</div>
+          <div class="text-[10px] text-slate-400">Ahead of the game</div>
+        </div>
+        <!-- Metric 3 -->
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-purple-500/40 transition-all text-center">
+          <div class="text-2xl sm:text-3xl mb-1">💎</div>
+          <div class="font-display text-xl sm:text-2xl font-black text-purple-300">MAX</div>
+          <div class="text-xs font-bold text-slate-200 mt-1">Loyalty & Heart</div>
+          <div class="text-[10px] text-slate-400">Pure golden soul</div>
+        </div>
+        <!-- Metric 4 -->
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-emerald-500/40 transition-all text-center">
+          <div class="text-2xl sm:text-3xl mb-1">🚀</div>
+          <div class="font-display text-xl sm:text-2xl font-black text-emerald-300">∞</div>
+          <div class="text-xs font-bold text-slate-200 mt-1">Limitless Potential</div>
+          <div class="text-[10px] text-slate-400">No glass ceilings</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Interactive Birthday Wishes Wall -->
+    <div class="w-full max-w-3xl mt-12 sm:mt-16 p-4 sm:p-8 rounded-3xl bg-slate-900/60 backdrop-blur-2xl border border-white/10 text-left">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 sm:mb-6">
+        <div>
+          <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+            <span>💌</span> Lochan's Golden Wishes Wall
+          </h3>
+          <p class="text-xs text-slate-400">Drop your personal salute or tap one-click blessings below!</p>
+        </div>
+        <span id="wishCountBadge" class="self-start sm:self-auto px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 font-code text-xs">
+          4 Wishes Pinned
+        </span>
+      </div>
+
+      <!-- Quick Preset Wish Buttons -->
+      <div class="flex flex-wrap gap-1.5 sm:gap-2 mb-4">
+        <button class="preset-btn px-2.5 sm:px-3 py-1 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 text-[11px] sm:text-xs text-slate-300 transition-all">
+          👑 King of Great Moves!
+        </button>
+        <button class="preset-btn px-2.5 sm:px-3 py-1 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 text-[11px] sm:text-xs text-slate-300 transition-all">
+          🚀 Billion-Dollar Year Incoming!
+        </button>
+        <button class="preset-btn px-2.5 sm:px-3 py-1 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 text-[11px] sm:text-xs text-slate-300 transition-all">
+          🔥 Pure Greatness Only!
+        </button>
+        <button class="preset-btn px-2.5 sm:px-3 py-1 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 text-[11px] sm:text-xs text-slate-300 transition-all">
+          🥂 Cheers to the Extraordinary Legend!
+        </button>
+      </div>
+
+      <!-- Custom Input & Send Form -->
+      <div class="flex flex-col sm:flex-row gap-2 mb-6">
+        <input 
+          id="customWishInput" 
+          type="text" 
+          maxlength="120"
+          placeholder="Write an epic message for Lochan..." 
+          class="w-full flex-1 bg-black/40 border border-white/15 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition-all"
+        />
+        <button 
+          id="sendWishBtn" 
+          class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 text-black font-bold text-xs sm:text-sm hover:brightness-110 active:scale-95 transition-all shadow-md shrink-0"
+        >
+          Post ✨
+        </button>
+      </div>
+
+      <!-- Stream of Wishes -->
+      <div id="wishesGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-72 overflow-y-auto pr-1">
+        <!-- Wish Card 1 -->
+        <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 flex items-start gap-3">
+          <div class="text-xl">🌟</div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-amber-300">The Universe</span>
+              <span class="text-[10px] text-slate-500">Just now</span>
+            </div>
+            <p class="text-xs text-slate-200 mt-0.5">May the road rise to meet your ambitions, Lochan. Keep dominating!</p>
+          </div>
+        </div>
+        <!-- Wish Card 2 -->
+        <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 flex items-start gap-3">
+          <div class="text-xl">🏆</div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-cyan-300">Inner Circle</span>
+              <span class="text-[10px] text-slate-500">10m ago</span>
+            </div>
+            <p class="text-xs text-slate-200 mt-0.5">To the man whose energy is completely unmatched. Have an extraordinary birthday!</p>
+          </div>
+        </div>
+        <!-- Wish Card 3 -->
+        <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 flex items-start gap-3">
+          <div class="text-xl">🚀</div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-purple-300">Galaxy Council</span>
+              <span class="text-[10px] text-slate-500">30m ago</span>
+            </div>
+            <p class="text-xs text-slate-200 mt-0.5">Another level unlocked today. Shine brighter than any supernova, Lochan!</p>
+          </div>
+        </div>
+        <!-- Wish Card 4 -->
+        <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 flex items-start gap-3">
+          <div class="text-xl">🥂</div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-emerald-300">Squad</span>
+              <span class="text-[10px] text-slate-500">1h ago</span>
+            </div>
+            <p class="text-xs text-slate-200 mt-0.5">Cheers to health, wealth, and infinite happiness for our boy Lochan!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Celebratory Interactive Hint (Removed HONORING LOCHAN • TODAY & FOREVER) -->
+    <div class="mt-12 sm:mt-16 text-center pb-6">
+      <p class="text-xs sm:text-sm text-slate-400 font-light flex items-center justify-center gap-1.5">
+        <span>✨</span> Tap anywhere on screen to launch celebratory firework bursts! <span>🎆</span>
+      </p>
+    </div>
+
+  </main>
+
+  <script>
+    // Full Canvas Particle & Fireworks System (Silent & Lightweight)
+    const canvas = document.getElementById('fireworksCanvas');
+    const ctx = canvas.getContext('2d');
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const particles = [];
+    const stars = [];
+
+    // Initialize twinkling star field
+    for (let i = 0; i < 90; i++) {
+      stars.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 1.5,
+        alpha: Math.random(),
+        speed: 0.005 + Math.random() * 0.015
+      });
+    }
+
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 6 + 2;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+        this.alpha = 1;
+        this.decay = Math.random() * 0.018 + 0.012;
+        this.radius = Math.random() * 3 + 1.5;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.08; // subtle gravity
+        this.alpha -= this.decay;
+      }
+      draw(c) {
+        c.save();
+        c.globalAlpha = Math.max(0, this.alpha);
+        c.fillStyle = this.color;
+        c.shadowBlur = 10;
+        c.shadowColor = this.color;
+        c.beginPath();
+        c.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        c.fill();
+        c.restore();
+      }
+    }
+
+    function createFirework(x, y) {
+      const colors = ['#FFD700', '#FF1493', '#00FFFF', '#FF4500', '#9370DB', '#00FF7F'];
+      const chosenColor = colors[Math.floor(Math.random() * colors.length)];
+      for (let i = 0; i < 40; i++) {
+        particles.push(new Particle(x, y, chosenColor));
+      }
+    }
+
+    // Auto fireworks loop
+    let lastAutoTime = Date.now();
+    function animateCanvas() {
+      ctx.fillStyle = 'rgba(5, 5, 13, 0.25)';
+      ctx.fillRect(0, 0, width, height);
+
+      // Draw starry ambient
+      stars.forEach(s => {
+        s.alpha += s.speed;
+        if (s.alpha > 1 || s.alpha < 0.2) s.speed = -s.speed;
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(s.alpha)})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Update fireworks particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.update();
+        p.draw(ctx);
+        if (p.alpha <= 0) particles.splice(i, 1);
+      }
+
+      // Random background burst every 2.5s
+      if (Date.now() - lastAutoTime > 2500) {
+        createFirework(
+          Math.random() * width * 0.8 + width * 0.1,
+          Math.random() * height * 0.4 + height * 0.1
+        );
+        lastAutoTime = Date.now();
+      }
+
+      requestAnimationFrame(animateCanvas);
+    }
+    animateCanvas();
+
+    // Click anywhere on non-interactive regions to burst fireworks
+    window.addEventListener('pointerdown', (e) => {
+      // Avoid firing duplicate bursts when clicking buttons or inputs
+      if (e.target.closest('button, input, #cakeStage, #giftCard')) return;
+      createFirework(e.clientX, e.clientY);
+    });
+
+    // Interactive Floating Balloons System
+    const balloonContainer = document.getElementById('balloonContainer');
+    const balloonColors = [
+      'linear-gradient(135deg, #ff007f, #7928ca)',
+      'linear-gradient(135deg, #ffd700, #ff8c00)',
+      'linear-gradient(135deg, #00f2fe, #4facfe)',
+      'linear-gradient(135deg, #a855f7, #ec4899)'
+    ];
+
+    function spawnBalloon() {
+      if (balloonContainer.children.length > 10) return;
+      const b = document.createElement('div');
+      b.className = 'floating-balloon absolute cursor-pointer pointer-events-auto flex flex-col items-center group transition-transform hover:scale-110';
+      const startX = Math.random() * 85 + 5;
+      b.style.left = `${startX}vw`;
+      b.style.animationDuration = `${10 + Math.random() * 7}s`;
+
+      const color = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+
+      b.innerHTML = `
+        <div class="w-12 h-16 rounded-full shadow-lg flex items-center justify-center text-[10px] font-bold text-white tracking-widest border border-white/20" style="background: ${color};">
+          LOCHAN
+        </div>
+        <div class="w-0.5 h-10 bg-white/40 -mt-1"></div>
+      `;
+
+      // Pop interaction (Visual only)
+      b.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        const rect = b.getBoundingClientRect();
+        createFirework(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        
+        confetti({
+          particleCount: 25,
+          startVelocity: 25,
+          origin: {
+            x: (rect.left + rect.width / 2) / window.innerWidth,
+            y: (rect.top + rect.height / 2) / window.innerHeight
+          }
+        });
+        b.remove();
+      });
+
+      balloonContainer.appendChild(b);
+
+      setTimeout(() => {
+        if (b.parentNode) b.remove();
+      }, 18000);
+    }
+
+    setInterval(spawnBalloon, 2200);
+    for (let i = 0; i < 4; i++) setTimeout(spawnBalloon, i * 600);
+
+    // Interactive Cake Candle Blowing Mechanics
+    const blowBtn = document.getElementById('blowCandlesBtn');
+    const blowBtnLabel = document.getElementById('blowBtnLabel');
+    const candles = document.querySelectorAll('.candle-unit');
+    const wishGranted = document.getElementById('wishGrantedMessage');
+    let candlesBlown = false;
+
+    function blowCandle(candleEl) {
+      const flame = candleEl.querySelector('.flame');
+      if (!flame || flame.classList.contains('flame-extinguished')) return;
+
+      flame.classList.remove('flame-active');
+      flame.classList.add('flame-extinguished');
+
+      // Spawn puff of smoke
+      const smoke = document.createElement('div');
+      smoke.className = 'smoke-puff absolute -top-5 w-4 h-4 rounded-full bg-slate-300/60 blur-[2px] pointer-events-none';
+      candleEl.appendChild(smoke);
+      setTimeout(() => smoke.remove(), 1600);
+
+      checkAllCandles();
+    }
+
+    candles.forEach(c => {
+      c.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        blowCandle(c);
+      });
+    });
+
+    function checkAllCandles() {
+      const remaining = document.querySelectorAll('.flame.flame-active');
+      if (remaining.length === 0 && !candlesBlown) {
+        triggerGrandCelebration();
+      }
+    }
+
+    function triggerGrandCelebration() {
+      candlesBlown = true;
+      blowBtnLabel.textContent = '✨ Wish Sent to Lochan!';
+      wishGranted.classList.remove('hidden');
+
+      // Mega dual-cannon confetti celebration
+      const end = Date.now() + 3 * 1000;
+      (function frame() {
+        confetti({
+          particleCount: 7,
+          angle: 60,
+          spread: 65,
+          origin: { x: 0, y: 0.7 }
+        });
+        confetti({
+          particleCount: 7,
+          angle: 120,
+          spread: 65,
+          origin: { x: 1, y: 0.7 }
+        });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      })();
+
+      // Trigger bursts across screen
+      for (let k = 0; k < 6; k++) {
+        setTimeout(() => {
+          createFirework(
+            Math.random() * width * 0.7 + width * 0.15,
+            Math.random() * height * 0.5 + height * 0.15
+          );
+        }, k * 300);
+      }
+    }
+
+    blowBtn.addEventListener('click', () => {
+      candles.forEach(blowCandle);
+    });
+
+    // 3D Mystery Gift Unboxing
+    const giftCard = document.getElementById('giftCard');
+    const giftBoxContainer = document.getElementById('giftBoxContainer');
+    const giftStatusText = document.getElementById('giftStatusText');
+    let giftOpened = false;
+
+    giftCard.addEventListener('click', () => {
+      if (!giftOpened) {
+        giftOpened = true;
+        giftBoxContainer.classList.add('gift-opened');
+        giftStatusText.textContent = '✨ UNLOCKED: CROWN OF EXCELLENCE GRANTED!';
+        giftStatusText.className = 'text-xs font-bold text-cyan-300 mt-2 animate-pulse';
+
+        confetti({
+          particleCount: 80,
+          spread: 80,
+          origin: { y: 0.6 }
+        });
+      }
+    });
+
+    // Rocket Button Trigger
+    const megaBlastBtn = document.getElementById('megaBlastBtn');
+    megaBlastBtn.addEventListener('click', () => {
+      for (let i = 0; i < 8; i++) {
+        setTimeout(() => {
+          createFirework(
+            Math.random() * width * 0.8 + width * 0.1,
+            Math.random() * height * 0.6 + height * 0.1
+          );
+        }, i * 200);
+      }
+      confetti({
+        particleCount: 120,
+        spread: 100,
+        origin: { y: 0.5 }
+      });
+    });
+
+    // Name Trigger Interactive Pulse
+    const nameTrigger = document.getElementById('nameTrigger');
+    nameTrigger.addEventListener('click', () => {
+      confetti({
+        particleCount: 60,
+        spread: 90,
+        origin: { y: 0.3 }
+      });
+      createFirework(width / 2, height * 0.25);
+    });
+
+    // Stamp Endorsement
+    const stampBtn = document.getElementById('stampBtn');
+    let endorsed = false;
+    stampBtn.addEventListener('click', () => {
+      if (!endorsed) {
+        endorsed = true;
+        stampBtn.textContent = '⭐ Endorsed by 10,000+ Fans!';
+        stampBtn.className = 'px-3 py-1 rounded-lg bg-emerald-500/20 border border-emerald-400 text-[11px] font-bold text-emerald-200';
+      }
+    });
+
+    // Interactive Wishes Wall
+    const customWishInput = document.getElementById('customWishInput');
+    const sendWishBtn = document.getElementById('sendWishBtn');
+    const wishesGrid = document.getElementById('wishesGrid');
+    const wishCountBadge = document.getElementById('wishCountBadge');
+    const presetBtns = document.querySelectorAll('.preset-btn');
+    let totalWishes = 4;
+
+    function addWish(text, sender = 'A Friend & Fan') {
+      if (!text || text.trim() === '') return;
+      totalWishes++;
+      wishCountBadge.textContent = `${totalWishes} Wishes Pinned`;
+
+      const card = document.createElement('div');
+      card.className = 'p-3.5 rounded-xl bg-white/[0.06] border border-amber-400/40 flex items-start gap-3 transform scale-95 transition-all animate-fade-in';
+      card.innerHTML = `
+        <div class="text-xl">✨</div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-amber-300">${sender}</span>
+            <span class="text-[10px] text-slate-400 font-code">Just now</span>
+          </div>
+          <p class="text-xs text-white mt-0.5">${escapeHTML(text)}</p>
+        </div>
+      `;
+
+      wishesGrid.insertBefore(card, wishesGrid.firstChild);
+
+      confetti({
+        particleCount: 30,
+        spread: 50,
+        origin: { y: 0.8 }
+      });
+
+      customWishInput.value = '';
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+
+    sendWishBtn.addEventListener('click', () => {
+      addWish(customWishInput.value, 'Dedicated Admirer');
+    });
+
+    customWishInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        addWish(customWishInput.value, 'Dedicated Admirer');
+      }
+    });
+
+    presetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        addWish(btn.textContent.trim(), 'Lochan Fanclub');
+      });
+    });
+
+    // Initial load burst
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        createFirework(width / 2, height * 0.3);
+      }, 500);
+    });
+  </script>
+</body>
+</html>
