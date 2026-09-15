@@ -170,7 +170,7 @@
         <span class="font-mono text-xs uppercase tracking-widest text-amber-400 font-bold mb-1">Visual Chronicle</span>
         <h2 class="text-2xl sm:text-3xl font-display font-extrabold text-white">The Legend In Frames</h2>
         <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-md">
-          Three iconic dimensions of Lochan. Tap <span class="text-amber-300 font-semibold">📷 Swap</span> on any card to insert his actual photos!
+          Three iconic dimensions of Lochan.
         </p>
       </div>
 
@@ -191,10 +191,6 @@
               <h3 class="font-display font-bold text-sm sm:text-base text-white">Unmatched Mind</h3>
               <p class="text-[11px] font-mono text-amber-400">Always 10 Steps Ahead</p>
             </div>
-            <label class="cursor-pointer px-3 py-1.5 rounded-xl bg-white/[0.08] hover:bg-white/20 border border-white/15 text-xs font-medium text-slate-200 flex items-center gap-1.5 transition-all active:scale-95" title="Upload Photo">
-              📷 <span>Swap</span>
-              <input type="file" accept="image/*" class="hidden" onchange="loadCustomPhoto(event, 0)">
-            </label>
           </div>
         </div>
 
@@ -214,10 +210,6 @@
               <h3 class="font-display font-bold text-sm sm:text-base text-white">Pure Charisma</h3>
               <p class="text-[11px] font-mono text-rose-400">Magnetic Energy</p>
             </div>
-            <label class="cursor-pointer px-3 py-1.5 rounded-xl bg-white/[0.08] hover:bg-white/20 border border-white/15 text-xs font-medium text-slate-200 flex items-center gap-1.5 transition-all active:scale-95" title="Upload Photo">
-              📷 <span>Swap</span>
-              <input type="file" accept="image/*" class="hidden" onchange="loadCustomPhoto(event, 1)">
-            </label>
           </div>
         </div>
 
@@ -237,10 +229,6 @@
               <h3 class="font-display font-bold text-sm sm:text-base text-white">Loyal To The Core</h3>
               <p class="text-[11px] font-mono text-cyan-400">True Brother & Legend</p>
             </div>
-            <label class="cursor-pointer px-3 py-1.5 rounded-xl bg-white/[0.08] hover:bg-white/20 border border-white/15 text-xs font-medium text-slate-200 flex items-center gap-1.5 transition-all active:scale-95" title="Upload Photo">
-              📷 <span>Swap</span>
-              <input type="file" accept="image/*" class="hidden" onchange="loadCustomPhoto(event, 2)">
-            </label>
           </div>
         </div>
       </div>
@@ -674,27 +662,12 @@
       createFirework(width / 2, height * 0.25);
     });
 
-    // Photo Lightbox & Custom Upload Controls
+    // Photo Lightbox Controls
     const photoDetails = [
       { title: "The Visionary", subtitle: "Lochan • Unmatched Ambition & Sharp Intellect" },
       { title: "Pure Charisma", subtitle: "Lochan • Magnetic Presence & Natural Star" },
       { title: "Loyal To The Core", subtitle: "Lochan • True Brother & Golden Soul" }
     ];
-
-    function loadCustomPhoto(event, index) {
-      const file = event.target.files && event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const imgEl = document.getElementById(`galleryImg${index}`);
-          if (imgEl) {
-            imgEl.src = e.target.result;
-            confetti({ particleCount: 35, spread: 60, origin: { y: 0.6 } });
-          }
-        };
-        reader.readAsDataURL(file);
-      }
-    }
 
     const photoModal = document.getElementById('photoModal');
     const modalImg = document.getElementById('modalImg');
